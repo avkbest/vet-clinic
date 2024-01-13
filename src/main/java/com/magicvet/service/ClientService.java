@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public class ClientService {
 
 	private static final String EMAIL_PATTERN = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
-
+	final private static String NAME_PATTERN = "^[a-zA-Z]{2,}+(-[a-zA-Z]{2,}+)?";
 	public Optional<Client> registerNewClient() {
 		Client client = null;
 
@@ -33,12 +33,27 @@ public class ClientService {
 	private static Client buildClient(String email) {
 		Client client = new Client();
 		client.setEmail(email);
-
+		Pattern pattern = Pattern.compile(NAME_PATTERN);
 		System.out.print("First name: ");
 		client.setFirstName(Main.SCANNER.nextLine());
+		Matcher matcherF = pattern.matcher(client.getFirstName());
+        if (matcherF.find()) {
+			System.out.print("Last name: ");
+			client.setLastName(Main.SCANNER.nextLine());
+			Matcher matcherL = pattern.matcher(client.getLastName());
+			if (!matcherL.find()){
+				client.setLastName("Invalid lastname! Try again.");
+				System.out.println("Invalid lastname! Try again.");
+				client = buildClient(email);
 
-		System.out.print("Last name: ");
-		client.setLastName(Main.SCANNER.nextLine());
+			}
+		}else {
+            client.setFirstName("Invalid name! Try Again.");
+			System.out.println("Invalid name! Try again.");
+			client = buildClient(email);
+		}
+
+
 
 		System.out.print("Location: ");
 
@@ -63,4 +78,4 @@ public class ClientService {
 		Matcher matcher = pattern.matcher(email);
 		return  matcher.matches();
 	}
-}
+	}
